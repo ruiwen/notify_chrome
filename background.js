@@ -15,17 +15,20 @@ var notify = {
 		ab2str: function(buf) {
 			// http://updates.html5rocks.com/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
 			// FUTURE: https://code.google.com/p/stringencoding/
-			return String.fromCharCode.apply(null, new Uint8Array(buf));
+			//return String.fromCharCode.apply(null, new Uint16Array(buf));
+			return TextDecoder('utf-8').decode(new Uint8Array(buf));
 		},
 		str2ab: function(str) {
 			// http://updates.html5rocks.com/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
 			// FUTURE: https://code.google.com/p/stringencoding/
-			var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
-			var bufView = new Uint8Array(buf);
-			for (var i=0, strLen=str.length; i<strLen; i++) {
-				bufView[i] = str.charCodeAt(i);
-			}
-			return buf;
+			// var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+			// var bufView = new Uint16Array(buf);
+			// for (var i=0, strLen=str.length; i<strLen; i++) {
+			// 	bufView[i] = str.charCodeAt(i);
+			// }
+			// return buf;
+
+			return TextEncoder('utf-8').encode(str);
 		},
 		parse: function(data) {
 			// Parse string from Android client

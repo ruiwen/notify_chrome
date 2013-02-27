@@ -15,7 +15,10 @@
 
   "app": {
     "background": {
-      "scripts": ["background.js"]
+      "scripts": [
+        "background.js",
+        "lib/encoding.js"
+        ]
     }
   },
 
