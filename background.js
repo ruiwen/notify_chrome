@@ -6,6 +6,11 @@
 
 
 var notify = {
+	notification: {
+		show: function(title, opts) {
+
+		}
+	},
 	utils: {
 		ab2str: function(buf) {
 			// http://updates.html5rocks.com/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
@@ -21,6 +26,25 @@ var notify = {
 				bufView[i] = str.charCodeAt(i);
 			}
 			return buf;
+		},
+		parse: function(data) {
+			// Parse string from Android client
+			var out = {};
+			var items = data.split("|");
+			// items[0] = items[0].substring(1, items[0].length-1);
+			// title_components = items[0].split(": ");
+			// out.title = title_components.shift();
+			// if(title_components.length) {
+			// 	out.body = title_components[0].replace("\"", "");
+			// }
+
+			out['title'] = items[0];
+			out['body'] = items[1];
+			out['tag'] = items[2];
+
+			console.log(out);
+
+			return out;
 		}
 	},
 	socket: {
@@ -82,9 +106,15 @@ var notify = {
 			console.log(notify.utils.ab2str(d.data));
 
 			var str = notify.utils.ab2str(d.data);
+			var ndata = notify.utils.parse(str);
 
-			var notification = webkitNotifications.createNotification('icon_32.png', 'Data received', str);
-			notification.show();
+			var n = new Notification(ndata['title'], {
+				'body': (ndata['body']) ? ndata['body'] : '',
+				'tag': (ndata['tag']) ? ndata['tag'] : ''
+			})
+
+			// var notification = webkitNotifications.createNotification('icon_32.png', 'Data received', str);
+			// notification.show();
 		}
 	}
 };
