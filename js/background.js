@@ -33,6 +33,8 @@ var notify = {
 		parse: function(data) {
 			// Parse string from Android client
 			var out = {};
+			data = data.trim();
+			data.replace(/(\r\n|\n|\r)/gm,"");
 			var items = data.split("|");
 			// items[0] = items[0].substring(1, items[0].length-1);
 			// title_components = items[0].split(": ");
@@ -48,11 +50,133 @@ var notify = {
 			console.log(out);
 
 			return out;
+		},
+		xor: function(str, key) {
+			// Returns str XOR'd against key
+			// Borrowed from http://snipplr.com/view/46795/
+
+			var ord = [];
+			var buf = "";
+
+			for (z = 1; z <= 255; z++) { ord[String.fromCharCode(z)] = z; }
+			for (j = z = 0; z < str.length; z++) {
+				buf += String.fromCharCode(ord[str.substr(z, 1)] ^ ord[key.substr(j, 1)]);
+				j = (j < key.length) ? j + 1 : 0;
+			}
+
+			return buf;
+		},
+		verify: function(str) {
+
+		},
+		process: function(str, dgram) {
+
+			console.log("process");
+			console.log(dgram);
+			var key = notify.key.key();
+			// if(key) {
+
+			// }
+			// else {
+			// 	// Add listener
+
+			// 	// Handle
+			// }
+
+			var handle = function() { console.log("handle");
+				//var plainStr = notify.utils.xor(str, key);
+				//var ndata = notify.utils.parse(plainStr);
+
+				var ndata = notify.utils.parse(str);
+				console.log("ndata");
+				console.log(ndata);
+
+				//if(!ndata['verified']) { return; }  // Abort if it's not a verified Notify message
+
+				// Hello is a handshake
+				if(ndata['title'].trim() == "HELLO") { console.log("HELLO");
+					var highPort = notify.port.high();
+
+					var notifyHigh = function(socketId) {
+						var n = new Notification("High port open", {
+							'body': highPort
+						});
+
+						// Send notice about the high port
+						var highXor = notify.utils.xor(highPort.toString(), notify.key.key());
+						console.log(highXor);
+						highXor = notify.utils.str2ab(highXor);
+
+						console.log("highXor");
+						console.log(highXor);
+						console.log("addr: " + dgram.address);
+						console.log("port: " + dgram.port);
+						console.log("socketId: " + socketId);
+						notify.socket.send(notify.socket.list['main'], highXor.buffer, dgram.address, dgram.port, function(data) { console.log("send cb"); console.log(data); });
+					}
+
+					if("high" in notify.socket.list) {
+						notifyHigh(notify.socket.list["high"]);
+					}
+					else {
+						notify.socket.open("high", highPort, function(socketId) {
+							notifyHigh(socketId);
+						});
+					}
+				}
+
+				// Not a handshake packet
+				else {  console.log("NO HELLO");
+					// Pop the notification
+					var n = new Notification(ndata['title'], {
+						'body': (ndata['body']) ? ndata['body'] : '',
+						'tag': (ndata['tag']) ? ndata['tag'] : ''
+					});
+				}
+			};
+
+			handle();
+		}
+	},
+	key: {
+		PWD_KEY: "pwd",
+		__key: null,
+		retrieve: function() {
+			// Retrieve the user's password from chrome.storage
+			chrome.storage.sync.get(notify.key.PWD_KEY, function(p) {
+				if(notify.key.PWD_KEY in p) {
+					notify.key.__key = p[notify.key.PWD_KEY];
+
+					// Fire an event
+					var evt = new CustomEvent('$keyRetrieved', false, false, notify.key.__key);
+					window.dispatchEvent(evt);
+				}
+			});
+		},
+		key: function() {
+			// Return the key, if available
+			if(notify.key.__key) {
+				return notify.key.__key;
+			}
+			else {
+				notify.key.retrieve();
+			}
+		}
+	},
+	port: {
+		__high: null,
+		high: function() {
+			// Returns a random high port between 9001 and 10000 if one doesn't exist
+			if(!notify.port.__high) {
+				notify.port.__high = (Math.round(Math.random() * 10000) % 1000 ) + 9001;
+			}
+
+			return notify.port.__high;
 		}
 	},
 	socket: {
-		list: [],
-		open: function() {
+		list: {},
+		open: function(tag, port, cb) {
 			//console.log(chrome);
 			// chrome.socket.create('udp', '127.0.0.1', 9000, { onEvent: notify.socket.onData },
    //              function(socketInfo) {
@@ -65,12 +189,20 @@ var notify = {
    //              	});
 			// });
 
+			// USEFUL: Chrome socket api error list:
+			// https://code.google.com/p/chromium/codesearch#chromium/src/net/base/net_error_list.h
+
+			var port = port || 9000;  // Set the default port number
+
+			console.log("port: " + port);
+
 			chrome.socket.create('udp', {}, function(socketInfo) {
 				var socketId = socketInfo.socketId;
-				notify.socket.list.push(socketId);
-				chrome.socket.bind(socketId, '0.0.0.0', 9000, function(result) {
+				//notify.socket.list.push(socketId);
+				notify.socket.list[tag] = socketId;
+				chrome.socket.bind(socketId, '0.0.0.0', port, function(result) {
 					if(result) {
-						console.log("bind failed");
+						console.log("bind failed - " + socketId);
 						console.log(result);
 					}
 					else {
@@ -80,6 +212,11 @@ var notify = {
 							console.log(socketId);
 							console.log(d);
 						});
+
+						// Call the callback
+						if(typeof(cb) == 'function') {
+							cb(socketId);
+						}
 
 						console.log("connected!  " + result);
 						var notification = webkitNotifications.createNotification("",
@@ -92,6 +229,10 @@ var notify = {
 				});
 			});
 
+		},
+		send: function(socketId, dataAb, address, port, cb) {
+			var res = chrome.socket.sendTo(socketId, dataAb, address, port, cb);
+			console.log(res);
 		},
 		receiveLoop: function(socketId, bufSize, onData) {
 			var bufSize = bufSize || 512;
@@ -108,13 +249,18 @@ var notify = {
 			console.log(d);
 			console.log(notify.utils.ab2str(d.data));
 
+			// Convert to string
 			var str = notify.utils.ab2str(d.data);
-			var ndata = notify.utils.parse(str);
 
-			var n = new Notification(ndata['title'], {
-				'body': (ndata['body']) ? ndata['body'] : '',
-				'tag': (ndata['tag']) ? ndata['tag'] : ''
-			})
+			// Process
+			notify.utils.process(str, d);
+
+			//var ndata = notify.utils.parse(str);
+
+			// var n = new Notification(ndata['title'], {
+			// 	'body': (ndata['body']) ? ndata['body'] : '',
+			// 	'tag': (ndata['tag']) ? ndata['tag'] : ''
+			// });
 
 			// var notification = webkitNotifications.createNotification('icon_32.png', 'Data received', str);
 			// notification.show();
@@ -122,19 +268,21 @@ var notify = {
 	}
 };
 
-// chrome.app.runtime.onLaunched.addListener(function() {
-// 	// chrome.app.tabs.getCurrent(function(tab) {
-// 	// 	var tabId = tab.id;
-// 	// 	chrome.app.window.create('main.html', {
-// 	// 		"type": "normal",
-// 	// 		"tabId": tabId
-// 	// 	});
-// 	// });
+chrome.app.runtime.onLaunched.addListener(function() {
+	// chrome.app.tabs.getCurrent(function(tab) {
+	// 	var tabId = tab.id;
+	// 	chrome.app.window.create('main.html', {
+	// 		"type": "normal",
+	// 		"tabId": tabId
+	// 	});
+	// });
 
-// 	console.log(chrome.app.runtime);
+	chrome.app.window.create('main.html', {
+		id: "notify_main",
+		singleton: true
+	});
 
-// 	notify.socket.open();
-// });
+});
 
 // chrome.app.runtime.onRestarted.addListener(function() {
 // 	notify.socket.list.forEach(function(s) {
@@ -142,4 +290,5 @@ var notify = {
 // 	});
 // });
 
-notify.socket.open();
+notify.socket.open("main");
+notify.key.retrieve();  // Retrieve the password
