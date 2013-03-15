@@ -1,0 +1,11 @@
+body {
+	padding: 10px;
+}
+
+
+/** Password form **/
+#password_action input[type=text] {
+	box-sizing: border-box;
+	height: 3.3em;
+	width: 100%;
+}

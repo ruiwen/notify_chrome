@@ -1,13 +1,53 @@
-<html>
+<!DOCTYPE html>
+<html lang="">
+	<head>
+		<meta charset="utf-8">
+		<title>Notify</title>
 
-<head>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="css/flat-ui.css">
+		<link rel="stylesheet" type="text/css" href="css/styles.css">
 
-</head>
-<body>
+		<script src=""></script>
+	</head>
+	<body>
+		<header id="header">
+			<h1>Notify</h1>
+		</header>
 
-	<h1>HELLO WORLD</h1>
+		<section id="content">
+			<section id="messages">
+			</section>
+			<section id="security">
+				<h2>Set a password</h2>
+				<p>Passwords are used to ensure that no one can snoop on the notifications passing between your phone and this browser.</p>
 
 
-	<script src="background.js"></script>
-</body>
+				<div id="password_success" class="alert alert-success" style="display: none;">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					Password saved!
+				</div>
+				<form id="password_action">
+					<input type="text" name="password" placeholder="eg. MySuperSecretWord">
+					<input type="submit" class="span2 btn btn-large btn-block btn-primary" value="Set password">
+				</form>
+			</section>
+
+			<section id="info">
+				<!-- Will be used later -->
+			</section>
+		</section>
+
+		<footer id="footer">
+		</footer>
+
+		<!-- Javascript -->
+
+		<!-- jQuery -->
+		<script src="js/jquery-1.8.2.min.js"></script>
+
+		<!-- Notify custom scripts -->
+		<script src="js/custom.js"></script>
+
+	</body>
 </html>
