@@ -164,6 +164,11 @@ var notify = {
 				}
 			});
 		},
+		changed: function(changed, area) {
+			if(notify.settings.pwd_key in changed) {
+				notify.key.__key = md5(changed[notify.settings.pwd_key].newValue);
+			}
+		},
 		key: function() {
 			// Return the key, if available
 			if(notify.key.__key) {
@@ -299,3 +304,4 @@ chrome.app.runtime.onLaunched.addListener(function() {
 
 notify.socket.open("main");
 notify.key.retrieve();  // Retrieve the password
+chrome.storage.onChanged.addListener(notify.key.changed);
