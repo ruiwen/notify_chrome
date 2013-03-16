@@ -15,6 +15,8 @@ $('form').bind('submit', function(e) {
 		$('#password_success').fadeIn();
 	});
 
+	// Change submit button text
+	$('input[type=submit]').val("Change password");
 
 	// Stop propagation and default
 	e.stopPropagation();
