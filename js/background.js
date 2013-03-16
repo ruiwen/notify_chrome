@@ -13,8 +13,15 @@ var notify = {
 		handshake_tag: "HINOTIFY"
 	},
 	notification: {
-		show: function(title, opts) {
+		show: function(ndata) {
 
+			// Show only if there's a valid title
+			if(ndata['title']) {
+				var n = new Notification(ndata['title'], {
+							'body': ndata['body'],
+							'tag': ndata['tag']
+						});
+			}
 		}
 	},
 	utils: {
