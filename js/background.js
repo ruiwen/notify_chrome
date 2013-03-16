@@ -100,27 +100,25 @@ var notify = {
 
 				//if(!ndata['verified']) { return; }  // Abort if it's not a verified Notify message
 
-				// Hello is a handshake
-				if(ndata['title'].trim() == "HELLO") { console.log("HELLO");
-					var highPort = notify.port.high();
+				var highPort = notify.port.high();
 
-					var notifyHigh = function(socketId) {
-						var n = new Notification("High port open", {
-							'body': highPort
-						});
+				var notifyHigh = function(socketId) {
+					var n = new Notification("High port open", {
+						'body': highPort
+					});
 
-						// Send notice about the high port
-						var highXor = notify.utils.xor(highPort.toString(), notify.key.key());
-						console.log(highXor);
-						highXor = notify.utils.str2ab(highXor);
+					// Send notice about the high port
+					//var highXor = notify.utils.xor(highPort.toString(), notify.key.key());
+					var highXor = notify.settings.header_tag + "|" + highPort.toString();
+					console.log(highXor);
+					highXor = notify.utils.str2ab(highXor);
 
-						console.log("highXor");
-						console.log(highXor);
-						console.log("addr: " + dgram.address);
-						console.log("port: " + dgram.port);
-						console.log("socketId: " + socketId);
-						notify.socket.send(notify.socket.list['main'], highXor.buffer, dgram.address, dgram.port, function(data) { console.log("send cb"); console.log(data); });
-					}
+					notify.socket.send(notify.socket.list['main'], highXor.buffer, dgram.address, dgram.port, function(data) { console.log("send cb"); console.log(data); });
+				}
+
+				// Is this a handshake?
+				if(ndata['title'] == notify.settings.handshake_tag) { console.log("HELLO");
+
 
 					if("high" in notify.socket.list) {
 						notifyHigh(notify.socket.list["high"]);
