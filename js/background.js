@@ -43,6 +43,19 @@ var notify = {
 
 			return TextEncoder('utf-8').encode(str);
 		},
+		utf8_to_b64: function(str) {
+			// Taken from https://developer.mozilla.org/en-US/docs/DOM/window.btoa#Unicode_Strings
+			// Also http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
+			return window.btoa(unescape(encodeURIComponent( str )));
+		},
+		b64_to_utf8: function(str) {
+			// Taken from https://developer.mozilla.org/en-US/docs/DOM/window.btoa#Unicode_Strings
+			// Also http://ecmanaut.blogspot.ca/2006/07/encoding-decoding-utf8-in-javascript.html
+			return decodeURIComponent(escape(window.atob( str )));
+		},
+		str_to_utf8: function(str) {
+			return decodeURIComponent(escape(str));
+		},
 		parse: function(data) {
 			// Parse string from Android client
 			var out = {};
