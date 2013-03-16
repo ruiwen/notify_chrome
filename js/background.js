@@ -86,68 +86,79 @@ var notify = {
 		process: function(str, dgram) {
 
 			console.log("process");
-			console.log(dgram);
 			var key = notify.key.key();
-			// if(key) {
 
-			// }
-			// else {
-			// 	// Add listener
-
-			// 	// Handle
-			// }
-
-			var handle = function() { console.log("handle");
-				//var plainStr = notify.utils.xor(str, key);
-				//var ndata = notify.utils.parse(plainStr);
-
-				var ndata = notify.utils.parse(str);
-				console.log("ndata");
-				console.log(ndata);
-
-				//if(!ndata['verified']) { return; }  // Abort if it's not a verified Notify message
-
-				var highPort = notify.port.high();
-
-				var notifyHigh = function(socketId) {
-					var n = new Notification("High port open", {
-						'body': highPort
-					});
-
-					// Send notice about the high port
-					//var highXor = notify.utils.xor(highPort.toString(), notify.key.key());
-					var highXor = notify.settings.header_tag + "|" + highPort.toString();
-					console.log(highXor);
-					highXor = notify.utils.str2ab(highXor);
-
-					notify.socket.send(notify.socket.list['main'], highXor.buffer, dgram.address, dgram.port, function(data) { console.log("send cb"); console.log(data); });
+			var handle = function(str, key) {
+				try {
+					str = atob(str.trim()); // Base64 decode
+					var plainStr = notify.utils.munge(str, key);
+					plainStr = notify.utils.str_to_utf8(plainStr);
+					var ndata = notify.utils.parse(plainStr);
+					notify.notification.show(ndata);
 				}
-
-				// Is this a handshake?
-				if(ndata['title'] == notify.settings.handshake_tag) { console.log("HELLO");
-
-
-					if("high" in notify.socket.list) {
-						notifyHigh(notify.socket.list["high"]);
-					}
-					else {
-						notify.socket.open("high", highPort, function(socketId) {
-							notifyHigh(socketId);
-						});
-					}
-				}
-
-				// Not a handshake packet
-				else {  console.log("NO HELLO");
-					// Pop the notification
-					var n = new Notification(ndata['title'], {
-						'body': (ndata['body']) ? ndata['body'] : '',
-						'tag': (ndata['tag']) ? ndata['tag'] : ''
-					});
-				}
+				catch(e) { console.log(e); /* Fail silently */ }
 			};
 
-			handle();
+			if(key) {
+				handle(str, key);
+			}
+			else {
+				// Add listener
+				window.addEventListener('$keyRetrieved', function(key) {
+					// Handle
+					handler(str, key);
+				});
+			}
+
+			// var handle = function() { console.log("handle");
+			// 	//var plainStr = notify.utils.xor(str, key);
+			// 	//var ndata = notify.utils.parse(plainStr);
+
+			// 	var ndata = notify.utils.parse(str);
+			// 	console.log("ndata");
+			// 	console.log(ndata);
+
+			// 	//if(!ndata['verified']) { return; }  // Abort if it's not a verified Notify message
+
+			// 	var highPort = notify.port.high();
+
+			// 	var notifyHigh = function(socketId) {
+			// 		var n = new Notification("High port open", {
+			// 			'body': highPort
+			// 		});
+7
+			// 		// Send notice about the high port
+			// 		//var highXor = notify.utils.xor(highPort.toString(), notify.key.key());
+			// 		var highXor = notify.settings.header_tag + "|" + highPort.toString();
+			// 		console.log(highXor);
+			// 		highXor = notify.utils.str2ab(highXor);
+
+			// 		notify.socket.send(notify.socket.list['main'], highXor.buffer, dgram.address, dgram.port, function(data) { console.log("send cb"); console.log(data); });
+			// 	}
+
+			// 	// Is this a handshake?
+			// 	if(ndata['title'] == notify.settings.handshake_tag) { console.log("HELLO");
+
+
+			// 		if("high" in notify.socket.list) {
+			// 			notifyHigh(notify.socket.list["high"]);
+			// 		}
+			// 		else {
+			// 			notify.socket.open("high", highPort, function(socketId) {
+			// 				notifyHigh(socketId);
+			// 			});
+			// 		}
+			// 	}
+
+			// 	// Not a handshake packet
+			// 	else {  console.log("NO HELLO");
+			// 		// Pop the notification
+			// 		var n = new Notification(ndata['title'], {
+			// 			'body': (ndata['body']) ? ndata['body'] : '',
+			// 			'tag': (ndata['tag']) ? ndata['tag'] : ''
+			// 		});
+			// 	}
+			//};
 		}
 	},
 	key: {
