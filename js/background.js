@@ -83,9 +83,6 @@ var notify = {
 
 			return buf;
 		},
-		verify: function(str) {
-
-		},
 		process: function(str, dgram) {
 
 			console.log("process");
