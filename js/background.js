@@ -156,7 +156,7 @@ var notify = {
 			// Retrieve the user's password from chrome.storage
 			chrome.storage.sync.get(notify.settings.pwd_key, function(p) {
 				if(notify.settings.pwd_key in p) {
-					notify.key.__key = p[notify.settings.pwd_key];
+					notify.key.__key = md5(p[notify.settings.pwd_key]);
 
 					// Fire an event
 					var evt = new CustomEvent('$keyRetrieved', {'detail': notify.key.__key});
