@@ -59,18 +59,9 @@ var notify = {
 		parse: function(data) {
 			// Parse string from Android client
 			var out = {};
-			data = data.trim();
-			data.replace(/(\r\n|\n|\r)/gm,"");
 			var items = data.split("|");
-			// items[0] = items[0].substring(1, items[0].length-1);
-			// title_components = items[0].split(": ");
-			// out.title = title_components.shift();
-			// if(title_components.length) {
-			// 	out.body = title_components[0].replace("\"", "");
-			// }
 
 			if(items[0] == notify.settings.header_tag) {
-				console.log("verified");
 				out['title'] = items[1];
 				out['body'] = items[2];
 				out['tag'] = items[3];
