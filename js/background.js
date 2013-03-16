@@ -6,6 +6,11 @@
 
 
 var notify = {
+	settings: {
+		default_port: 9000,
+		header_tag: "NOTIFY",
+		handshake_tag: "HINOTIFY"
+	},
 	notification: {
 		show: function(title, opts) {
 
