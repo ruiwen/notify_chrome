@@ -160,7 +160,7 @@ var notify = {
 					notify.key.__key = p[notify.key.PWD_KEY];
 
 					// Fire an event
-					var evt = new CustomEvent('$keyRetrieved', false, false, notify.key.__key);
+					var evt = new CustomEvent('$keyRetrieved', {'detail': notify.key.__key});
 					window.dispatchEvent(evt);
 				}
 			});
