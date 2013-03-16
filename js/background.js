@@ -236,8 +236,7 @@ var notify = {
 
 		},
 		send: function(socketId, dataAb, address, port, cb) {
-			var res = chrome.socket.sendTo(socketId, dataAb, address, port, cb);
-			console.log(res);
+			chrome.socket.sendTo(socketId, dataAb, address, port, cb);
 		},
 		receiveLoop: function(socketId, bufSize, onData) {
 			var bufSize = bufSize || 512;
