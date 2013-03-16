@@ -48,10 +48,12 @@ var notify = {
 			// 	out.body = title_components[0].replace("\"", "");
 			// }
 
-			out['title'] = items[0];
-			out['body'] = items[1];
-			out['tag'] = items[2];
-
+			if(items[0] == notify.settings.header_tag) {
+				console.log("verified");
+				out['title'] = items[1];
+				out['body'] = items[2];
+				out['tag'] = items[3];
+			}
 			console.log(out);
 
 			return out;
