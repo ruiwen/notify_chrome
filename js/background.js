@@ -7,6 +7,7 @@
 
 var notify = {
 	settings: {
+		pwd_key: "pwd",
 		default_port: 9000,
 		header_tag: "NOTIFY",
 		handshake_tag: "HINOTIFY"
