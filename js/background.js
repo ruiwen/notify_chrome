@@ -259,11 +259,8 @@ var notify = {
 			console.log(d);
 			console.log(notify.utils.ab2str(d.data));
 
-			// Convert to string
-			var str = notify.utils.ab2str(d.data);
-
 			// Process
-			notify.utils.process(str, d);
+			notify.utils.process(notify.utils.ab2str(d.data), d);
 
 			//var ndata = notify.utils.parse(str);
 
