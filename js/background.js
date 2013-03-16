@@ -72,15 +72,13 @@ var notify = {
 		},
 		munge: function(str, key) {
 			// Returns str XOR'd against key
-			// Borrowed from http://snipplr.com/view/46795/
+			// Adapted from http://snipplr.com/view/46795/
 
 			var ord = [];
 			var buf = "";
 
-			for (z = 1; z <= 255; z++) { ord[String.fromCharCode(z)] = z; }
-			for (j = z = 0; z < str.length; z++) {
-				buf += String.fromCharCode(ord[str.substr(z, 1)] ^ ord[key.substr(j, 1)]);
-				j = (j < key.length) ? j + 1 : 0;
+			for(var i=0; i < str.length; ++i) {
+				buf += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
 			}
 
 			return buf;
