@@ -9,7 +9,9 @@ $('form').bind('submit', function(e) {
 	var password = $('#password_action input[name=password]').val();
 
 	// Store the password
-	chrome.storage.sync.set({PWD_KEY: password}, function() {
+	var val = {};
+	val[PWD_KEY] = password;
+	chrome.storage.sync.set(val, function() {
 		$('#password_success').fadeIn();
 	});
 
