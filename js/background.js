@@ -197,7 +197,7 @@ var notify = {
 			// USEFUL: Chrome socket api error list:
 			// https://code.google.com/p/chromium/codesearch#chromium/src/net/base/net_error_list.h
 
-			var port = port || 9000;  // Set the default port number
+			var port = port || notify.settings.default_port;  // Set the default port number
 
 			console.log("port: " + port);
 
