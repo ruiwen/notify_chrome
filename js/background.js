@@ -70,7 +70,7 @@ var notify = {
 
 			return out;
 		},
-		xor: function(str, key) {
+		munge: function(str, key) {
 			// Returns str XOR'd against key
 			// Borrowed from http://snipplr.com/view/46795/
 
