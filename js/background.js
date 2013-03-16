@@ -281,13 +281,6 @@ var notify = {
 };
 
 chrome.app.runtime.onLaunched.addListener(function() {
-	// chrome.app.tabs.getCurrent(function(tab) {
-	// 	var tabId = tab.id;
-	// 	chrome.app.window.create('main.html', {
-	// 		"type": "normal",
-	// 		"tabId": tabId
-	// 	});
-	// });
 
 	chrome.app.window.create('main.html', {
 		id: "notify_main",
