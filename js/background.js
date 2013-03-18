@@ -87,7 +87,6 @@ var notify = {
 		},
 		process: function(str, dgram) {
 
-			console.log("process");
 			var key = notify.key.key();
 
 			var handle = function(str, key) {
@@ -223,8 +222,6 @@ var notify = {
 
 			var port = port || notify.settings.default_port;  // Set the default port number
 
-			console.log("port: " + port);
-
 			chrome.socket.create('udp', {}, function(socketInfo) {
 				var socketId = socketInfo.socketId;
 				//notify.socket.list.push(socketId);
@@ -247,10 +244,9 @@ var notify = {
 							cb(socketId);
 						}
 
-						console.log("connected!  " + result);
-						var notification = webkitNotifications.createNotification("",
-							"Notify", "Socket open");
-						notification.show();
+						// var notification = webkitNotifications.createNotification("",
+						// 	"Notify", "Socket open");
+						// notification.show();
 
 						notify.socket.receiveLoop(socketId, 512, notify.socket.onData);
 					}
@@ -279,16 +275,6 @@ var notify = {
 
 			// Process
 			notify.utils.process(notify.utils.ab2str(d.data), d);
-
-			//var ndata = notify.utils.parse(str);
-
-			// var n = new Notification(ndata['title'], {
-			// 	'body': (ndata['body']) ? ndata['body'] : '',
-			// 	'tag': (ndata['tag']) ? ndata['tag'] : ''
-			// });
-
-			// var notification = webkitNotifications.createNotification('icon_32.png', 'Data received', str);
-			// notification.show();
 		}
 	}
 };
@@ -310,4 +296,5 @@ chrome.app.runtime.onLaunched.addListener(function() {
 
 notify.socket.open("main");
 notify.key.retrieve();  // Retrieve the password
+
 chrome.storage.onChanged.addListener(notify.key.changed);
