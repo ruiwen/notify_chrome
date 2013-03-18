@@ -61,10 +61,12 @@ var notify = {
 			var out = {};
 			var items = data.split("|");
 
-			if(items[0] == notify.settings.header_tag) {
-				out['title'] = items[1];
-				out['body'] = items[2];
-				out['tag'] = items[3];
+			// Check only from the second field onwards
+			// We discard the random salt in the first field
+			if(items[1] == notify.settings.header_tag) {
+				out['title'] = items[2];
+				out['body'] = items[3];
+				out['tag'] = items[4];
 			}
 			console.log(out);
 
