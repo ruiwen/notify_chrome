@@ -9,3 +9,14 @@ body {
 	height: 3.3em;
 	width: 100%;
 }
+
+
+/** Background app icon **/
+#app_icon {
+	opacity: 0.12;
+	position: absolute;
+	right: -22px;
+	top: -45px;
+	width: 70%;
+	z-index: -1;
+}
