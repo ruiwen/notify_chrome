@@ -2,8 +2,8 @@
   "manifest_version": 2,
 
   "name": "Notify",
-  "description": "Receive notifications sent from your Android phone to your desktop",
-  "version": "0.12",
+  "description": "Receive notifications sent from your Android phone right on your desktop",
+  "version": "0.12.1",
   "icons": {
     "128": "icon_128.png"
   },
