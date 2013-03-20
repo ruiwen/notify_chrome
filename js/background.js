@@ -283,7 +283,9 @@ chrome.app.runtime.onLaunched.addListener(function() {
 
 	chrome.app.window.create('main.html', {
 		id: "notify_main",
-		singleton: true
+		singleton: true,
+		maxWidth: 640,
+		maxHeight: 400
 	});
 
 });
