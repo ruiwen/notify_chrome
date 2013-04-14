@@ -21,6 +21,19 @@ var notify = {
 							'body': ndata.body,
 							'tag': ndata.tag
 						});
+
+				// Set close timeout
+				// Non-Mac OS only
+				setTimeout(function() {
+					n.close();
+				}, 5000);
+
+				// Set onclick handler
+				// Non-Mac OS only
+				n.onclick = function() {
+					n.close();
+				};
+
 			}
 		}
 	},
