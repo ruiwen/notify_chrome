@@ -17,9 +17,9 @@ var notify = {
 
 			// Show only if there's a valid title
 			if(ndata['title']) {
-				var n = new Notification(ndata['title'], {
-							'body': ndata['body'],
-							'tag': ndata['tag']
+				var n = new Notification(ndata.title, {
+							'body': ndata.body,
+							'tag': ndata.tag
 						});
 			}
 		}
@@ -64,9 +64,9 @@ var notify = {
 			// Check only from the second field onwards
 			// We discard the random salt in the first field
 			if(items[1] == notify.settings.header_tag) {
-				out['title'] = items[2];
-				out['body'] = items[3];
-				out['tag'] = items[4];
+				out.title = items[2];
+				out.body = items[3];
+				out.tag = items[4];
 			}
 			console.log(out);
 
