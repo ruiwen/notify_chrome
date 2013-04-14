@@ -16,7 +16,8 @@
         "lib/encoding.js",
         "lib/md5.js",
         "js/background.js"
-        ]
+        ],
+      "persistent": true
     }
   },
 
