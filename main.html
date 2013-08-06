@@ -30,13 +30,23 @@
 					Password saved!
 				</div>
 				<form id="password_action">
-					<input type="text" name="password" placeholder="eg. MySuperSecretWord">
-					<input type="submit" class="span2 btn btn-large btn-block btn-primary" value="Set password">
+					<input type="password" name="password" placeholder="eg. MySuperSecretWord">
+					<input type="submit" name="password_submit" class="span2 btn btn-large btn-block btn-primary" value="Set password">
 				</form>
 			</section>
 
 			<section id="info">
+				<h2>Settings</h2>
 				<!-- Will be used later -->
+				<div id="settings_success" class="alert alert-success" style="display: none;">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					Settings saved!
+				</div>
+				<form id="settings">
+					<label for="duration">Notification duration <small><em>(in seconds)</em></small></label>
+					<input id="duration" name="duration" type="text" value="5">
+					<input type="submit" class="span2 btn btn-large btn-block btn-primary" value="Save settings">
+				</form>
 			</section>
 		</section>
 

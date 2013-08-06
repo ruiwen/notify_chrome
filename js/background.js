@@ -8,11 +8,23 @@
 var notify = {
 	settings: {
 		pwd_key: "pwd",
+		duration_key: "duration",
 		default_port: 9000,
 		header_tag: "NOTIFY",
 		handshake_tag: "HINOTIFY"
 	},
 	notification: {
+		duration: {
+			length: 5,
+			change: function(changed, area) {
+				notify.notification.duration.length = changed[notify.settings.duration_key].newValue;
+			},
+			retrieve: function() {
+				chrome.storage.sync.get(notify.settings.duration_key, function(d) {
+					notify.notification.duration.length = d[notify.settings.duration_key];
+				});
+			}
+		},
 		show: function(ndata) {
 
 			// Show only if there's a valid title
@@ -128,7 +140,7 @@ var notify = {
 			// 		var n = new Notification("High port open", {
 			// 			'body': highPort
 			// 		});
-7
+
 			// 		// Send notice about the high port
 			// 		//var highXor = notify.utils.xor(highPort.toString(), notify.key.key());
 			// 		var highXor = notify.settings.header_tag + "|" + highPort.toString();
@@ -161,6 +173,17 @@ var notify = {
 			// 		});
 			// 	}
 			//};
+		}
+	},
+	storage: {
+		handler: function(changed, area) {
+			if(notify.settings.pwd_key in changed) {
+				notify.key.changed(changed, area);
+			}
+			else if (notify.settings.duration_key in changed) {
+				notify.notification.duration.change(changed, area);
+			}
+			else {}
 		}
 	},
 	key: {
@@ -278,5 +301,6 @@ chrome.app.runtime.onLaunched.addListener(function() {
 
 notify.socket.open("main");
 notify.key.retrieve();  // Retrieve the password
+notify.notification.duration.retrieve();
 
-chrome.storage.onChanged.addListener(notify.key.changed);
+chrome.storage.onChanged.addListener(notify.storage.handler);

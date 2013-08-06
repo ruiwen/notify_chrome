@@ -2,21 +2,22 @@
 // Custom JS for Notify
 
 var PWD_KEY = 'pwd';
+var DURATION = 'duration';
 var CURRENT_PWD = null;
 
 // Capture password on submit
-$('form').bind('submit', function(e) {
+$('#password_action').bind('submit', function(e) {
 	var password = $('#password_action input[name=password]').val();
 
 	// Store the password
 	var val = {};
-	val[PWD_KEY] = password;
+	val[PWD_KEY] = md5(password);
 	chrome.storage.sync.set(val, function() {
 		$('#password_success').fadeIn();
 	});
 
 	// Change submit button text
-	$('input[type=submit]').val("Change password");
+	$('input[name=password_submit]').val("Change password");
 
 	// Stop propagation and default
 	e.stopPropagation();
@@ -25,10 +26,27 @@ $('form').bind('submit', function(e) {
 	return false;
 });
 
+// Capture settings
+$('#settings').bind('submit', function(e) {
+	var duration = $('#duration').val();
+	duration = isNaN(duration) ? 5 : Number(duration);
+	console.log(duration);
+
+	var val = {};
+	val[DURATION] = duration;
+	chrome.storage.sync.set(val, function() {
+		$('#settings_success').fadeIn();
+	});
+
+	// Stop propagation and default
+	e.stopPropagation();
+	e.preventDefault();
+
+	return false;
+});
 
 // Event for close button
 $('button[data-dismiss="alert"]').live('click', function(e) {
-	console.log(e);
 	$(e.target).parent('.alert').fadeOut();
 });
 
@@ -37,15 +55,19 @@ $('button[data-dismiss="alert"]').live('click', function(e) {
 $(document).ready(function() {
 
 	// Retrieve password
-	chrome.storage.sync.get(PWD_KEY, function(p) {
+	chrome.storage.sync.get(null, function(p) {
 		if(PWD_KEY in p) {
 			CURRENT_PWD = p[PWD_KEY];
-			$('input[name=password]').val(CURRENT_PWD);
-			$('input[type=submit]').val("Change password");
+			$('input[name=password]').attr("placeholder", "(hidden)");
+			$('input[name=password_submit]').val("Change password");
 		}
 		else {
 			$('input[name=password]').val('');
-			$('input[type=submit]').val("Set password");
+			$('input[name=password_submit]').val("Set password");
+		}
+
+		if(DURATION in p) {
+			$('input[name=duration]').val(p[DURATION]);
 		}
 	});
 
