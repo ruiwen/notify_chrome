@@ -30,7 +30,6 @@ $('#password_action').bind('submit', function(e) {
 $('#settings').bind('submit', function(e) {
 	var duration = $('#duration').val();
 	duration = isNaN(duration) ? 5 : Number(duration);
-	console.log(duration);
 
 	var val = {};
 	val[DURATION] = duration;
