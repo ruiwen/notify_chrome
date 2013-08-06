@@ -17,23 +17,17 @@ var notify = {
 
 			// Show only if there's a valid title
 			if(ndata['title']) {
-				var n = new Notification(ndata.title, {
-							'body': ndata.body,
-							'tag': ndata.tag
-						});
 
-				// Set close timeout
-				// Non-Mac OS only
-				setTimeout(function() {
-					n.close();
-				}, 5000);
-
-				// Set onclick handler
-				// Non-Mac OS only
-				n.onclick = function() {
-					n.close();
-				};
-
+				chrome.notifications.create(ndata['tag'], {
+					"type": "basic",
+					"title": ndata['title'],
+					"message": ndata['body'],
+					"iconUrl": "img/notify.png"
+				}, function(notificationId) {
+					setTimeout(function() {
+						chrome.notifications.clear(notificationId, function() {});
+					}, notify.notification.duration.length * 1000);
+				});
 			}
 		}
 	},
