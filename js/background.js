@@ -293,8 +293,12 @@ chrome.app.runtime.onLaunched.addListener(function() {
 	chrome.app.window.create('main.html', {
 		id: "notify_main",
 		singleton: true,
-		maxWidth: 640,
-		maxHeight: 400
+		maxWidth: 430,
+		maxHeight: 660,
+		bounds: {
+			width: 430,
+			height: 660
+		}
 	});
 
 });
