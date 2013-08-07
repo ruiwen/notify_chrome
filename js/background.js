@@ -120,7 +120,7 @@ var notify = {
 				// Add listener
 				window.addEventListener('$keyRetrieved', function(key) {
 					// Handle
-					handler(str, key);
+					handle(str, key);
 				});
 			}
 
