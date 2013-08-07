@@ -9,15 +9,22 @@ var CURRENT_PWD = null;
 $('#password_action').bind('submit', function(e) {
 	var password = $('#password_action input[name=password]').val();
 
-	// Store the password
-	var val = {};
-	val[PWD_KEY] = md5(password);
-	chrome.storage.sync.set(val, function() {
-		$('#password_success').fadeIn();
-	});
+	if(password) {
+		// Store the password
+		var val = {};
+		val[PWD_KEY] = password;
+		chrome.storage.sync.set(val, function() {
+			$('#password_success').fadeIn();
+			$('#password_info').hide();
+		});
 
-	// Change submit button text
-	$('input[name=password_submit]').val("Change password");
+		// Change submit button text
+		$('input[name=password_submit]').val("Change password");
+	}
+	else {
+		$('#password_success').hide();
+		$('#password_info').fadeIn();
+	}
 
 	// Stop propagation and default
 	e.stopPropagation();
